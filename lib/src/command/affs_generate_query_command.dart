@@ -1,6 +1,12 @@
 import 'package:afib/afib_command.dart';
 import 'package:afib_firebase_firestore/src/command/affs_generate_command.dart';
-import 'package:afib_firebase_firestore/src/command/templates/affs_core/files/write_one.t.dart';
+import 'package:afib_firebase_firestore/src/command/templates/affs_core/files/query_listen_many.t.dart';
+import 'package:afib_firebase_firestore/src/command/templates/affs_core/files/query_listen_one.t.dart';
+import 'package:afib_firebase_firestore/src/command/templates/affs_core/files/query_read_one.t.dart';
+import 'package:afib_firebase_firestore/src/command/templates/affs_core/files/query_write_one.t.dart';
+
+import 'templates/affs_core/files/query_delete_one.t.dart';
+import 'templates/affs_core/files/query_read_many.t.dart';
 
 class AFFSGenerateQueryCommand extends AFFSGenerateSubcommand {
   static const prefixReadOne = "ReadOne";
@@ -49,22 +55,57 @@ $optionsHeader
         AFGenerateQuerySubcommand.argRootStateType: generator.nameRootState,
         AFGenerateSubcommand.argExportTemplatesFlag: "false",
         AFGenerateSubcommand.argOverrideTemplatesFlag: "",
-        AFGenerateSubcommand.argMemberVariables: "",
+        AFGenerateSubcommand.argMemberVariables: "String sourceId",
       }
     );
 
     final mainType = args.accessUnnamedFirst;
+    var resultType = args.accessNamed(AFGenerateQuerySubcommand.argResultModelType);
 
     var querySuffix = AFGenerateQuerySubcommand.suffixQuery;
     if(mainType.endsWith(AFGenerateQuerySubcommand.suffixListenerQuery)) {
       querySuffix = AFGenerateQuerySubcommand.suffixListenerQuery;
     }
 
-    final memberVariables = context.memberVariables(args);
+    final isListenerQuery = mainType.endsWith(AFGenerateQuerySubcommand.suffixListenerQuery);
+    final isStandardQuery = mainType.endsWith(AFGenerateQuerySubcommand.suffixQuery);
+
     AFSourceTemplate? overrideTemplate;
-    String? overrideSuperclass = "AFFSFirestoreQuery";
+    String? overrideParentType = "AFFSFirestoreQuery";
     if(mainType.startsWith(prefixWriteOne)) {
-      overrideTemplate = WriteOneQueryT.core();
+      overrideTemplate = QueryWriteOneT.core();
+    } else if(mainType.startsWith(prefixReadOne)) {
+      if(isListenerQuery) {
+        overrideTemplate = QueryListenOneT.core();
+        overrideParentType = "AFFSFirestoreSnapshotListenerQuery";
+      } else if(isStandardQuery) {
+        overrideTemplate = QueryReadOneT.core();
+      } else {
+        throwUsageError("The query name $mainType did not end in a valid suffix.");
+      }
+    } else if(mainType.startsWith(prefixReadMany)) {
+      if(!resultType.startsWith("List<")) {
+        throwUsageError("When creating a $prefixReadMany query, your result-type should be a List<OfSomething>");
+      }
+      if(isListenerQuery) {
+        overrideTemplate = QueryListenManyT.core();
+        overrideParentType = "AFFSFirestoreListenerQuery";
+      } else if(isStandardQuery) {
+        overrideTemplate = QueryReadManyT.core();
+      } else {
+        throwUsageError("The query name $mainType did not end in a valid suffix.");
+      }
+    } else if(mainType.startsWith(prefixDeleteOne)) {
+      if(!isStandardQuery) {
+        throwUsageError("The query name $mainType did not end in a valid suffix.");
+      }
+      if(resultType.isEmpty) {
+        throwUsageError("The result type of a deletion query is the type of object you are deleting.");
+      }
+      if(!resultType.endsWith("?")) {
+        throwUsageError("The result type for a deletion query should be nullable (e.g. $resultType?)");
+      }
+      overrideTemplate = QueryDeleteOneT.core();
     } else {
       throwUsageError("$mainType does not start with a known prefix");
     }
@@ -75,7 +116,8 @@ $optionsHeader
       queryType: mainType, 
       args: args, 
       usage: usage,
-      overrideParentType: overrideSuperclass,
+      resultType: resultType,
+      overrideParentType: overrideParentType,
       overrideTemplate: overrideTemplate,
     );
 

@@ -53,41 +53,80 @@ abstract class AFFSFirestoreQuery<TResponse> extends AFAsyncQuery<TResponse> {
     onResponse(dfDocs);
   }
 
+  static void handleError(dynamic err, void Function(AFQueryError) onError) {
+    onError(AFQueryError(message: err.toString()));
+  }
+
+  static List<TResult> buildResultsList<TResult>({
+    required List<AFFirestoreDocument> docs,
+    required TResult Function(Map<String, dynamic>) create
+  }) {
+    final result = <TResult>[];
+    for(final doc in docs) {
+      final data = doc.data;
+      data[AFDocumentIDGenerator.columnId] = doc.documentId;
+      result.add(create(data));
+    }
+    return result;
+  }
+
   /// Writes [doc] to the collection [col], calling [onResponse] with the saved result.
-  void writeToFirebase(CollectionReference coll, AFFirestoreDocument doc, Function(AFFirestoreDocument) onResponse, Function(AFQueryError) onError) {
+  void writeOneToFirebase({ 
+    required CollectionReference collection, 
+    required AFFirestoreDocument doc, 
+    required Function(AFFirestoreDocument) onSuccess, 
+    required Function(AFQueryError) onError
+  }) {
     _fb.runTransaction((tx) async {
       // create a new one.
       DocumentReference result;
       if(doc.isNew) {
-        result = await coll.add(doc.data);
+        result = await collection.add(doc.data);
       } else {
         // update an existing one.
-        result = coll.doc(doc.documentId);
+        result = collection.doc(doc.documentId);
         await result.set(doc.data);
       }
       final updated = convertDocument(result, doc.data);
-      onResponse(updated);
+      onSuccess(updated);
     });  
   }
 
-  void deleteFromFirebase(CollectionReference coll, String documentId, Function() onResponse) {
+  void deleteOneFromFirebase({
+    required CollectionReference collection, 
+    required String documentId, 
+    required void Function() onSuccess,
+    required void Function(AFQueryError) onError
+  }) {
     _fb.runTransaction((tx) async {
-      final doc = coll.doc(documentId);
-      await doc.delete();
-      onResponse();
+      final doc = collection.doc(documentId);
+      doc.delete().then(
+        (value) =>  onSuccess(),
+        onError: (err) => handleError(err, onError)
+      );
     });
   }
 
-  void performQuery(Query q, Function(List<AFFirestoreDocument>) onResponse, Function(AFQueryError) onError) {
-    q.get().then( (data) {
-      AFFSFirestoreQuery.handleSnapshots(data.docs, onResponse);
+  void readManyFromFirebase({
+    required Query query, 
+    required void Function(List<AFFirestoreDocument>) onSuccess, 
+    required void Function(AFQueryError) onError
+  }) {
+    query.get().then( (data) {
+      AFFSFirestoreQuery.handleSnapshots(data.docs, onSuccess);
+    }, onError: (err) {
+      AFFSFirestoreQuery.handleError(err, onError);
     });
   }
 
-  void readFromFirebase(DocumentReference ref, Function(AFFirestoreDocument) onResponse, Function(AFQueryError) onError) {
-    ref.get().then( (doc) {
-      AFFSFirestoreQuery.handleSnapshot(doc, onResponse);
-    });
+  void readOneFromFirebase({
+    required DocumentReference documentRef, 
+    required void Function(AFFirestoreDocument) onSuccess, 
+    required void Function(AFQueryError) onError
+  }) {
+    documentRef.get().then( (doc) {
+      AFFSFirestoreQuery.handleSnapshot(doc, onSuccess);
+    }, onError: (err) => handleError(err, onError));
   }  
 
 

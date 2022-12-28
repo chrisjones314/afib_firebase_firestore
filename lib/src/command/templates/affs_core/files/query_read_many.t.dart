@@ -1,13 +1,11 @@
-
-
 import 'package:afib/afib_command.dart';
 import 'package:afib_firebase_firestore/src/command/templates/affs_project_paths.dart';
 
-class WriteOneQueryT {
+class QueryReadManyT {
 
   static SimpleQueryT core() {
-    return WriteOneQueryT.create(
-      templateFileId: "write_one",
+    return QueryReadManyT.create(
+      templateFileId: "query_read_many",
       templateFolder: AFFSProjectPaths.pathGenerateAFFSCoreFiles
     );
   }
@@ -18,6 +16,8 @@ class WriteOneQueryT {
     Object? insertStartImpl,
     Object? insertFinishImpl,
     Object? extraImports = "",
+    Object? documentIdReference = "sourceId",
+    Object? insertAdditionalMethods = "",
   }) {
     return SimpleQueryT(
       templateFileId: templateFileId, 
@@ -28,28 +28,23 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 $extraImports
 ''',
       insertStartImpl: insertStartImpl ?? '''
-// access the collection
-final coll = FirebaseFirestore.instance.collection(${SimpleQueryT.insertResultTypeInsertion}.tableName);
+final coll = FirebaseFirestore.instance.collection(${SimpleQueryT.insertResultTypeSingleInsertion}.tableName);    
 
-// create a document, not that if user.id is a AFDocumentIDGenerate.createNewId value, then this
-// object will be created, otherwise it will be updated.
-final doc = AFFirestoreDocument(
-  documentId: user.id, 
-  data: ${SimpleQueryT.insertResultTypeInsertion}.serializeToMap(user)
+// TODO: You will need to replace this query, and perhaps the member variable(s) to
+// be sensible for your applications logic.  This query is unlikely to work by default.
+final query = coll.where(AFDocumentIDGenerator.columnId, isEqualTo: sourceId);
+
+readManyFromFirebase(query: query, 
+  onSuccess: (docs) {
+    final results = AFFSFirestoreQuery.buildResultsList<${SimpleQueryT.insertResultTypeSingleInsertion}>(
+      docs: docs, 
+      create: (serial) => ${SimpleQueryT.insertResultTypeSingleInsertion}.serializeFromMap(serial)
+    );
+    context.onSuccess(results);      
+  }, onError: (err) {
+    context.onError(AFQueryError(message: err.message));      
+  }
 );
-
-// write the document to firebase.
-writeToFirebase(coll, doc, (doc) {
-  // then parse it back in.
-  final data = doc.data;
-  final id = doc.documentId;
-  data[${SimpleQueryT.insertResultTypeInsertion}.colId] = id;
-  final response = ${SimpleQueryT.insertResultTypeInsertion}.serializeFromMap(data);
-  // and, let finishAsync integrate it into our state
-  context.onSuccess(response);
-}, (err) {
-  context.onError(AFQueryError(message: err.message));
-});    
 ''',
       insertFinishImpl: insertFinishImpl ?? '''
 final response = context.r;
@@ -59,6 +54,15 @@ final ${AFSourceTemplate.insertAppNamespaceInsertion}State = context.accessCompo
 final revisedRoot = Object();
 
 context.updateComponentRootStateOne<${AFSourceTemplate.insertAppNamespaceInsertion.upper}State>(revisedRoot);
+''',
+    insertAdditionalMethods: '''
+String get documentId {
+  // if this doesn't compile, then you need to change it to return the id of the collection entry that you are 
+  // looking up from one of your member variables.
+  return $documentIdReference;
+}
+
+$insertAdditionalMethods
 ''',
     );
   }
