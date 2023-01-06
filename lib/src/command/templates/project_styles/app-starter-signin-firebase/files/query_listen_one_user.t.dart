@@ -1,7 +1,6 @@
 
 import 'package:afib/afib_command.dart';
 import 'package:afib_firebase_firestore/src/command/templates/affs_core/files/query_listen_one.t.dart';
-import 'package:afib_firebase_firestore/src/command/templates/affs_core/files/query_write_one.t.dart';
 import 'package:afib_firebase_firestore/src/command/templates/affs_project_paths.dart';
 
 class QueryListenOneUserT {
