@@ -18,8 +18,8 @@ static void updateUser(AFFinishQuerySuccessContext<${SimpleQueryT.insertResultTy
   final response = context.r;
   final ${AFSourceTemplate.insertAppNamespaceInsertion}State = context.accessComponentState<${AFSourceTemplate.insertAppNamespaceInsertion.upper}State>();
   
-  final users = ${AFSourceTemplate.insertAppNamespaceInsertion}State.referencedUsers;
-  final revised = users.reviseUser(response);
+  final users = ${AFSourceTemplate.insertAppNamespaceInsertion}State.users;
+  final revised = users.reviseSetItem(response);
   
   context.updateComponentRootStateOne<${AFSourceTemplate.insertAppNamespaceInsertion.upper}State>(revised);
 }

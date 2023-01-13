@@ -56,6 +56,7 @@ $optionsHeader
         AFGenerateSubcommand.argExportTemplatesFlag: "false",
         AFGenerateSubcommand.argOverrideTemplatesFlag: "",
         AFGenerateSubcommand.argMemberVariables: "String sourceId",
+        AFGenerateSubcommand.argResolveVariables: "",
       }
     );
 
