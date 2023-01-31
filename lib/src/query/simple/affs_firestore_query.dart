@@ -18,18 +18,18 @@ abstract class AFFSFirestoreQuery<TResponse> extends AFAsyncQuery<TResponse> {
 
   /// Converts a [DocumentReference] into an [AFFirestoreDocument]
   static AFFirestoreDocument convertDocument(DocumentReference doc, Map<String, dynamic> data) {
-    return AFFirestoreDocument(documentId: doc.id, data: data);
+    return AFFirestoreDocument(documentId: doc.id, data: data, exists: true);
   }
 
   /// Converts a [DocumentSnapshot] int an [AFFirestoreDocument]
   static AFFirestoreDocument convertSnapshot(DocumentSnapshot doc) {
-    return AFFirestoreDocument(documentId: doc.id, data: _documentData(doc));
+    return AFFirestoreDocument(documentId: doc.id, data: _documentData(doc), exists: true);
   }
 
   /// Converts a list of [DocumentSnapshot] into a list of [AFFirestoreDocument]
   static List<AFFirestoreDocument> convertSnapshots(List<DocumentSnapshot> docs) {
     return docs.map((doc) { 
-      return AFFirestoreDocument(documentId: doc.id, data: _documentData(doc));
+      return AFFirestoreDocument(documentId: doc.id, data: _documentData(doc), exists: true);
     }).toList();
   }
 
