@@ -35,7 +35,8 @@ final coll = FirebaseFirestore.instance.collection(${SimpleQueryT.insertResultTy
 // object will be created, otherwise it will be updated.
 final doc = AFFirestoreDocument(
   documentId: user.id, 
-  data: ${SimpleQueryT.insertResultTypeInsertion}.serializeToMap(user)
+  data: ${SimpleQueryT.insertResultTypeInsertion}.serializeToMap(user),
+  exists: true,
 );
 
 // write the document to firebase.
