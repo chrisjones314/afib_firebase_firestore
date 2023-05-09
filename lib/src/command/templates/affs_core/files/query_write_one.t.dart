@@ -1,6 +1,7 @@
 
 
 import 'package:afib/afib_command.dart';
+import 'package:afib_firebase_firestore/src/command/templates/affs_core/files/query_listen_many.t.dart';
 import 'package:afib_firebase_firestore/src/command/templates/affs_project_paths.dart';
 
 class QueryWriteOneT {
@@ -34,8 +35,8 @@ final coll = FirebaseFirestore.instance.collection(${SimpleQueryT.insertResultTy
 // create a document, not that if user.id is a AFDocumentIDGenerate.createNewId value, then this
 // object will be created, otherwise it will be updated.
 final doc = AFFirestoreDocument(
-  documentId: user.id, 
-  data: ${SimpleQueryT.insertResultTypeInsertion}.serializeToMap(user),
+  documentId: ${QueryListenManyT.queryMemberVariableIdentifier}.id,
+  data: ${SimpleQueryT.insertResultTypeInsertion}.serializeToMap(${QueryListenManyT.queryMemberVariableIdentifier}),
   exists: true,
 );
 
@@ -61,8 +62,8 @@ writeOneToFirebase(
 final response = context.r;
 final ${AFSourceTemplate.insertAppNamespaceInsertion}State = context.accessComponentState<${AFSourceTemplate.insertAppNamespaceInsertion.upper}State>();
 
-// TODO, revise should be from ${AFSourceTemplate.insertAppNamespaceInsertion}State.someRoot.revise...(response)
-final revisedRoot = Object();
+final revisedRoot = ${AFSourceTemplate.insertAppNamespaceInsertion}State.${SimpleQueryT.insertResultTypeSingleInsertion.camelPluralize}.reviseSetItem(response);
+
 
 context.updateComponentRootStateOne<${AFSourceTemplate.insertAppNamespaceInsertion.upper}State>(revisedRoot);
 ''',

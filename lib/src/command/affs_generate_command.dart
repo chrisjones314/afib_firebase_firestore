@@ -5,7 +5,7 @@ class AFFSGenerateParentCommand extends AFCommandGroup {
   final name = "affs:generate";
 
   @override
-  final description = "Generate AFib source code for screens, queries, models, and more";
+  final description = "Generate code for firestore-related queries";
   
 
   @override

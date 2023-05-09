@@ -1,4 +1,5 @@
 import 'package:afib/afib_command.dart';
+import 'package:afib_firebase_firestore/src/command/templates/affs_core/files/query_listen_many.t.dart';
 import 'package:afib_firebase_firestore/src/command/templates/affs_project_paths.dart';
 
 class QueryReadOneT {
@@ -29,7 +30,7 @@ $extraImports
 ''',
       insertStartImpl: insertStartImpl ?? '''
 final coll = FirebaseFirestore.instance.collection(${SimpleQueryT.insertResultTypeInsertion}.tableName);    
-final ref = coll.doc(documentId);
+final ref = coll.doc(${QueryListenManyT.queryMemberVariableIdentifier});
 readOneFromFirebase(documentRef: ref, onSuccess: (doc) {
   final data = doc.data;
   final id = doc.documentId;
@@ -46,18 +47,11 @@ readOneFromFirebase(documentRef: ref, onSuccess: (doc) {
 final response = context.r;
 final ${AFSourceTemplate.insertAppNamespaceInsertion}State = context.accessComponentState<${AFSourceTemplate.insertAppNamespaceInsertion.upper}State>();
 
-// TODO, revise should be from ${AFSourceTemplate.insertAppNamespaceInsertion}State.someRoot.revise...(response)
-final revisedRoot = Object();
+final revisedRoot = ${AFSourceTemplate.insertAppNamespaceInsertion}State.${SimpleQueryT.insertResultTypeSingleInsertion.camelPluralize}.reviseSetItem(response);
 
 context.updateComponentRootStateOne<${AFSourceTemplate.insertAppNamespaceInsertion.upper}State>(revisedRoot);
 ''',
     insertAdditionalMethods: '''
-String get documentId {
-  // if this doesn't compile, then you need to change it to return the id of the collection entry that you are 
-  // looking up from one of your member variables.
-  return $documentIdReference;
-}
-
 $insertAdditionalMethods
 ''',
     );

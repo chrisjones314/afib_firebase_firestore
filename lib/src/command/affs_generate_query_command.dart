@@ -37,6 +37,10 @@ $descriptionHeader
     $prefixDeleteOne...${AFGenerateQuerySubcommand.suffixQuery} - deletes a single value from a collection
 
 $optionsHeader
+    ${AFGenerateSubcommand.argMemberVariables} -- specify at least one member variable for the query.  This member variable will be used in your query, and will usually be: 
+      for single-item queries: "String id"
+      for many-item queries: "String yourForeignKey", where yourForeignKey is a foreign key value on your result type.
+      for write queries "YourResultType yourresulttype", the object to be written
     ${AFGenerateQuerySubcommand.argResultModelType} -- the type of the result (not applicable for $prefixDeleteOne)
 
 ''';
@@ -55,13 +59,19 @@ $optionsHeader
         AFGenerateQuerySubcommand.argRootStateType: generator.nameRootState,
         AFGenerateSubcommand.argExportTemplatesFlag: "false",
         AFGenerateSubcommand.argOverrideTemplatesFlag: "",
-        AFGenerateSubcommand.argMemberVariables: "String sourceId",
+        AFGenerateSubcommand.argMemberVariables: "",
         AFGenerateSubcommand.argResolveVariables: "",
       }
     );
 
     final mainType = args.accessUnnamedFirst;
     var resultType = args.accessNamed(AFGenerateQuerySubcommand.argResultModelType);
+
+    var memberVariables = args.accessNamed(AFGenerateSubcommand.argMemberVariables);
+    if(memberVariables.isEmpty) {
+      throwUsageError("Please specify at least one member variable using --${AFGenerateSubcommand.argMemberVariables}, it will typically be the value(s) you want to use in the query");
+    }
+
 
     var querySuffix = AFGenerateQuerySubcommand.suffixQuery;
     if(mainType.endsWith(AFGenerateQuerySubcommand.suffixListenerQuery)) {
@@ -111,6 +121,12 @@ $optionsHeader
       throwUsageError("$mainType does not start with a known prefix");
     }
 
+    final memberVariableId = _parseOneFrom(memberVariables);
+
+    context = context.reviseAddCoreInsertions({
+      QueryListenManyT.queryMemberVariableIdentifier: memberVariableId
+    });
+
     AFGenerateQuerySubcommand.createQuery(
       context: context, 
       querySuffix: querySuffix, 
@@ -124,4 +140,23 @@ $optionsHeader
 
     context.generator.finalizeAndWriteFiles(context);
   }
+
+  String _parseOneFrom(String memberVariables) {
+    final vars = memberVariables.split(";");
+    if(vars.length < 1) {
+      throwUsageError("--${AFGenerateSubcommand.argMemberVariables} is missing or has bad format");
+    }
+    final firstVar = vars[0];
+    final decl = firstVar.split(" ");
+    if(decl.length < 2) {
+      throwUsageError("expected --${AFGenerateSubcommand.argMemberVariables} to have the form 'Type identifier'");
+    }
+    final result = decl[1];
+    if(result == "id") {
+      throwUsageError("--${AFGenerateSubcommand.argMemberVariables} cannot contain 'String id', please using something more specific, like 'String userId'");
+    }
+
+    return result;
+  }
+
 }

@@ -1,4 +1,5 @@
 import 'package:afib/afib_command.dart';
+import 'package:afib_firebase_firestore/src/command/templates/affs_core/files/query_listen_many.t.dart';
 import 'package:afib_firebase_firestore/src/command/templates/affs_project_paths.dart';
 
 class QueryDeleteOneT {
@@ -31,7 +32,7 @@ $extraImports
 final coll = FirebaseFirestore.instance.collection(${SimpleQueryT.insertResultTypeSingleInsertion}.tableName);    
 deleteOneFromFirebase(
   collection: coll,
-  documentId: documentId,
+  documentId: ${QueryListenManyT.queryMemberVariableIdentifier},
   onSuccess: () => context.onSuccess(null),
   onError: context.onError
 );
@@ -40,18 +41,11 @@ deleteOneFromFirebase(
 final response = context.r;
 final ${AFSourceTemplate.insertAppNamespaceInsertion}State = context.accessComponentState<${AFSourceTemplate.insertAppNamespaceInsertion.upper}State>();
 
-// TODO, revise should be from ${AFSourceTemplate.insertAppNamespaceInsertion}State.someRoot.revise...(response)
-final revisedRoot = Object();
+final revisedRoot = ${AFSourceTemplate.insertAppNamespaceInsertion}State.${SimpleQueryT.insertResultTypeSingleInsertion.camelPluralize}.reviseRemoveItemById(${QueryListenManyT.queryMemberVariableIdentifier});
 
 context.updateComponentRootStateOne<${AFSourceTemplate.insertAppNamespaceInsertion.upper}State>(revisedRoot);
 ''',
     insertAdditionalMethods: '''
-String get documentId {
-  // if this doesn't compile, then you need to change it to return the id of the collection entry that you are 
-  // deleting from one of your member variables.
-  return $documentIdReference;
-}
-
 $insertAdditionalMethods
 ''',
     );
