@@ -31,7 +31,7 @@ $extraImports
       insertStartImpl: insertStartImpl ?? '''
 final coll = FirebaseFirestore.instance.collection(${SimpleQueryT.insertResultTypeSingleInsertion}.tableName);    
 
-// TODO: You will need to replace this query, and perhaps the member variable(s) to
+// AFIB_TODO: You will need to replace this query, and perhaps the member variable(s) to
 // be sensible for your applications logic.  This query is unlikely to work by default.
 final query = coll.where(${SimpleQueryT.insertResultTypeSingleInsertion}.col${QueryListenManyT.queryMemberVariableIdentifier.upperFirst}, isEqualTo: ${QueryListenManyT.queryMemberVariableIdentifier});
 
