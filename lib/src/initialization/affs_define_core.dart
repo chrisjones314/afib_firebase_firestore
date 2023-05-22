@@ -1,6 +1,5 @@
 import 'package:afib/afib_flutter.dart';
 import 'package:afib_firebase_firestore/src/state/affs_state.dart';
-import 'package:flutter/material.dart';
 
 void defineCore(AFCoreDefinitionContext context) {
   defineEventHandlers(context);

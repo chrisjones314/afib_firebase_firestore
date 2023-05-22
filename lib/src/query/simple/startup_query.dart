@@ -1,5 +1,4 @@
 import 'package:afib/afib_flutter.dart';
-import 'package:afib_firebase_firestore/src/state/affs_state.dart';
 
 class StartupQuery extends AFAsyncQuery<AFUnused> {
   
