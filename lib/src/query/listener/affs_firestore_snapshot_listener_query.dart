@@ -1,6 +1,7 @@
 
 import 'dart:async';
 
+import 'package:afib/afib_command.dart';
 import 'package:afib/afib_flutter.dart';
 import 'package:afib_firebase_firestore/src/query/simple/affs_firestore_query.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

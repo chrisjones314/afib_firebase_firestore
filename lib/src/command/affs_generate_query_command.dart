@@ -143,7 +143,7 @@ $optionsHeader
 
   String _parseOneFrom(String memberVariables) {
     final vars = memberVariables.split(";");
-    if(vars.length < 1) {
+    if(vars.isEmpty) {
       throwUsageError("--${AFGenerateSubcommand.argMemberVariables} is missing or has bad format");
     }
     final firstVar = vars[0];
