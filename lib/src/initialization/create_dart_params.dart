@@ -7,7 +7,7 @@ import 'package:afib_firebase_firestore/src/initialization/environments/prototyp
 import 'package:afib_firebase_firestore/src/initialization/environments/test.dart';
 
 AFDartParams createDartParams() {
-  return AFDartParams(    
+  return const AFDartParams(    
     configureAfib: configureAfib,
     configureAppConfig: configureApplication,
     configureProductionConfig: configureProduction,
