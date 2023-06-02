@@ -22,7 +22,7 @@ class AFFSState extends AFComponentState with AFFSStateModelAccess {
   }
 
   factory AFFSState.initial() {
-    return AFFSState.fromList([
+    return AFFSState.fromList(const [
     ]);
   }
 }
