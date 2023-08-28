@@ -1,7 +1,10 @@
 name: afib_firebase_firestore
 description: An AFib-aware package that adds command-line options for creating AFib queries that interact with Firestore
 homepage: https://www.afibframework.io
+repository: https://github.com/chrisjones314/afib_firebase_firestore
+issue_tracker: https://github.com/chrisjones314/afib_firebase_firestore/issues
 documentation: https://docs.afibframework.io/v0.5/afib_firebase_firestore/startup/start_here/
+
 version: 0.5.0
 
 environment:
