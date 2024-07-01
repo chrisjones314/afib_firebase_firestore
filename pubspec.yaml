@@ -5,17 +5,17 @@ repository: https://github.com/chrisjones314/afib_firebase_firestore
 issue_tracker: https://github.com/chrisjones314/afib_firebase_firestore/issues
 documentation: https://docs.afibframework.io/v0.5/afib_firebase_firestore/startup/start_here/
 
-version: 0.5.0
+version: 0.5.1
 
 environment:
   sdk: ">=2.18.5 <4.0.0"
 
 dependencies:
   meta: ^1.9.1
-  afib: ^0.5.1
-    #path: /Users/chrisjones/projects/afib/afib
-  firebase_core: ^2.15.1
-  cloud_firestore: ^4.9.0
+  afib: #^0.5.2
+    path: /Users/chrisjones/projects/afib/afib
+  firebase_core: ^2.31.1
+  cloud_firestore: ^4.17.4
 
 
 dev_dependencies:
