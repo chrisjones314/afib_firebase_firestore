@@ -8,11 +8,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 abstract class AFFSFirestoreQuery<TResponse> extends AFAsyncQuery<TResponse> {
 
   AFFSFirestoreQuery({
-    AFID? id, 
-    AFPreExecuteResponseDelegate<TResponse>? onPreExecuteResponse,
-    AFOnResponseDelegate<TResponse>? onSuccess, 
-    AFOnErrorDelegate? onError
-  }): super(id: id, onSuccess: onSuccess, onError: onError, onPreExecuteResponse: onPreExecuteResponse);
+    super.id, 
+    super.onPreExecuteResponse,
+    super.onSuccess, 
+    super.onError
+  });
 
   /// The firestore instance.
   static final _fb = FirebaseFirestore.instance;

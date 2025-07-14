@@ -1,22 +1,15 @@
-import 'package:afib/afib_command.dart';
 import 'package:afib/afib_flutter.dart';
 
 class StartupQuery extends AFAsyncQuery<AFUnused> {
   
   
   StartupQuery({
-    AFID? id,
+    super.id,
     
-    AFOnResponseDelegate<AFUnused>? onSuccess,
-    AFOnErrorDelegate? onError,
-    AFPreExecuteResponseDelegate<AFUnused>? onPreExecuteResponse
-  }): super(
-    id: id,
-    onSuccess: onSuccess,
-    
-    onError: onError,
-    onPreExecuteResponse: onPreExecuteResponse,
-  );
+    super.onSuccess,
+    super.onError,
+    super.onPreExecuteResponse
+  });
   
   @override
   void startAsync(AFStartQueryContext<AFUnused> context) async {

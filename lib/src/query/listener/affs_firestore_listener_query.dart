@@ -11,12 +11,11 @@ abstract class AFFSFirestoreListenerQuery<TResponse> extends AFAsyncListenerQuer
   StreamSubscription<QuerySnapshot>? subscription;
 
   AFFSFirestoreListenerQuery({
-    AFID? id,
-    AFPreExecuteResponseDelegate<TResponse>? onPreExecuteResponse,
-    AFOnResponseDelegate<TResponse>? onSuccess, 
-    AFOnErrorDelegate? onError
-  }): 
-    super(id: id, onSuccess: onSuccess, onError: onError, onPreExecuteResponse: onPreExecuteResponse);
+    super.id,
+    super.onPreExecuteResponse,
+    super.onSuccess, 
+    super.onError
+  });
 
   //--------------------------------------------------------------------------------------
   @override

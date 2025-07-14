@@ -11,12 +11,11 @@ abstract class AFFSFirestoreSnapshotListenerQuery<TResponse> extends AFAsyncList
   StreamSubscription<DocumentSnapshot>? subscription;
 
   AFFSFirestoreSnapshotListenerQuery({
-    AFID? id, 
-    AFPreExecuteResponseDelegate<TResponse>? onPreExecuteResponse,
-    AFOnResponseDelegate<TResponse>? onSuccess, 
-    AFOnErrorDelegate? onError
-  }): 
-    super(id: id, onSuccess: onSuccess, onError: onError, onPreExecuteResponse: onPreExecuteResponse);
+    super.id, 
+    super.onPreExecuteResponse,
+    super.onSuccess, 
+    super.onError
+  });
 
   @override
   void shutdown() {
