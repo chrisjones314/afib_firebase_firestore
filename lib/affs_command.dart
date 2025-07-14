@@ -1,3 +1,3 @@
-library afib_firebase_firestore;
+library;
 
 export 'src/affs_install_command.dart';
